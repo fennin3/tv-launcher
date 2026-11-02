@@ -182,13 +182,16 @@ function saveSettings(){ try{ localStorage.setItem(SET_KEY,JSON.stringify(S)); }
 /* =======================================================================
    Clock
    ======================================================================= */
+const WEEKDAYS=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
 function tick(){
   const d=new Date(); let hh, ampm="";
   if(S.clock24){ hh=String(d.getHours()).padStart(2,"0"); }
   else { let h=d.getHours()%12; if(h===0)h=12; hh=String(h); ampm=d.getHours()>=12?"PM":"AM"; }
   const mm=String(d.getMinutes()).padStart(2,"0");
   document.getElementById("time").innerHTML = hh+":"+mm + (ampm?'<span class="ampm">'+ampm+'</span>':'');
-  document.getElementById("date").textContent = d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});
+  // Build the date manually — some TV browsers ship no locale data for toLocaleDateString.
+  document.getElementById("date").textContent = WEEKDAYS[d.getDay()]+" "+d.getDate()+" "+MONTHS[d.getMonth()];
 }
 tick(); setInterval(tick,15000);
 
