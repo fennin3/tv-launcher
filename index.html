@@ -8,310 +8,227 @@
   /* ---------- Design tokens ---------- */
   :root{
     --bg-0:#07070b;
-    --bg-1:#0d0e15;
-    --ink:#f4f5fb;
-    --ink-dim:#9aa0b4;
-    --ink-faint:#5b6075;
-    --glass:rgba(255,255,255,0.055);
-    --glass-strong:rgba(255,255,255,0.10);
-    --stroke:rgba(255,255,255,0.10);
-    --stroke-bright:rgba(255,255,255,0.22);
-    --accent:#7aa2ff;
-    --accent-2:#43e0c8;
+    --ink:#f6f8ff;
+    --ink-dim:#c3c9dc;
+    --ink-faint:#8b92a8;
+    --accent:#8fe6ff;
+    --glass:rgba(18,20,30,0.42);
+    --glass-item:rgba(255,255,255,0.14);
+    --stroke:rgba(255,255,255,0.14);
     --focus:#ffffff;
-    --radius:24px;
-    --safe: 2.7vw;           /* overscan-safe gutter */
-    --tile: 20vw;            /* app tile size */
+    --safe:3vw;
     --ease:cubic-bezier(.2,.7,.2,1);
   }
-
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
   body{
     background:var(--bg-0);
     color:var(--ink);
     font-family:"Inter","SF Pro Display",-apple-system,"Segoe UI",Roboto,system-ui,sans-serif;
-    overflow:hidden;
-    -webkit-font-smoothing:antialiased;
-    letter-spacing:.2px;
-    user-select:none;
+    overflow:hidden;-webkit-font-smoothing:antialiased;letter-spacing:.2px;user-select:none;
   }
 
-  /* ---------- Ambient background ---------- */
-  .bg{position:fixed;inset:0;z-index:0;overflow:hidden;background:
-      radial-gradient(1200px 800px at 15% -10%, #16213f 0%, transparent 55%),
-      radial-gradient(1100px 820px at 100% 0%, #1b2e38 0%, transparent 50%),
-      linear-gradient(180deg,var(--bg-1),var(--bg-0) 70%);}
-  .photo{position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat}
+  /* ---------- Background ---------- */
+  .bg{position:fixed;inset:0;z-index:0;overflow:hidden;background:var(--bg-0)}
+  .photo{position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat;
+         transition:opacity .5s var(--ease)}
   .scrim{position:absolute;inset:0;background:
-      linear-gradient(105deg,rgba(4,5,12,.86) 0%,rgba(4,5,12,.46) 38%,rgba(4,5,12,.30) 62%,rgba(4,5,12,.62) 100%),
-      radial-gradient(130% 95% at 50% 125%,rgba(2,3,8,.78),transparent 55%)}
-  .grain{position:absolute;inset:0;opacity:.04;background-image:radial-gradient(#fff 0.5px,transparent 0.6px);background-size:3px 3px;mix-blend-mode:overlay}
+      linear-gradient(180deg,rgba(2,3,8,.40) 0%,rgba(2,3,8,.10) 18%,transparent 46%,rgba(2,3,8,.28) 74%,rgba(2,3,8,.72) 100%)}
+  .grain{position:absolute;inset:0;opacity:.035;background-image:radial-gradient(#fff .5px,transparent .6px);
+         background-size:3px 3px;mix-blend-mode:overlay}
 
-  /* ---------- Shell ---------- */
-  .wrap{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;
-        padding:var(--safe) var(--safe) 1.4vw;}
+  /* ---------- Top-right clock ---------- */
+  .topright{position:fixed;z-index:2;top:var(--safe);right:var(--safe);text-align:right;
+            text-shadow:0 2px 18px rgba(0,0,0,.5)}
+  .time{font-size:5.6vw;font-weight:300;line-height:.95;letter-spacing:1px;color:#eaf7ff;
+        font-variant-numeric:tabular-nums}
+  .date{margin-top:.3vw;font-size:1.7vw;font-weight:600;color:var(--ink)}
+  .wx{margin-top:.5vw;font-size:1.3vw;font-weight:600;color:var(--ink-dim);display:flex;gap:.5vw;
+      justify-content:flex-end;align-items:center}
+  .wx .ico{font-size:1.5vw;line-height:1}
 
-  /* ---------- Top bar ---------- */
-  .top{display:flex;justify-content:space-between;align-items:flex-start;gap:2vw}
-  .clock{line-height:.92}
-  .time{font-size:6.3vw;font-weight:800;letter-spacing:-1px;
-        background:linear-gradient(180deg,#fff,#c7cce6);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .time .ampm{font-size:2.4vw;font-weight:700;color:var(--ink-dim);margin-left:.6vw;-webkit-text-fill-color:var(--ink-dim)}
-  .date{margin-top:.4vw;font-size:1.7vw;font-weight:600;color:var(--ink-dim)}
+  /* ---------- Bottom dock ---------- */
+  .dockwrap{position:fixed;z-index:2;left:0;right:0;bottom:calc(var(--safe) * .9);
+            display:flex;justify-content:center;
+            padding-left:max(16px,env(safe-area-inset-left,0px));
+            padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .dock{display:flex;align-items:stretch;gap:.4vw;max-width:100%;
+        background:var(--glass);border:1px solid var(--stroke);border-radius:26px;
+        padding:.7vw 1.1vw;backdrop-filter:blur(26px) saturate(150%);-webkit-backdrop-filter:blur(26px) saturate(150%);
+        box-shadow:0 2vw 5vw rgba(0,0,0,.5)}
+  .dockitem{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.45vw;
+            padding:.85vw 1.35vw;border-radius:18px;cursor:pointer;min-width:6vw;
+            transition:transform .22s var(--ease),background .22s var(--ease),box-shadow .22s var(--ease)}
+  .dockitem .ic{width:2.5vw;height:2.5vw;color:var(--ink);display:grid;place-items:center}
+  .dockitem .ic svg{width:100%;height:100%}
+  .dockitem .ic .letter{font-size:2.1vw;font-weight:800;line-height:1}
+  .dockitem .lbl{font-size:1.02vw;font-weight:600;color:var(--ink-dim);white-space:nowrap;
+                 transition:color .22s var(--ease)}
+  .sep{width:1px;align-self:center;height:4.2vw;background:var(--stroke);margin:0 .5vw}
 
-  .weather{display:flex;align-items:center;gap:1.1vw;background:var(--glass);
-           border:1px solid var(--stroke);border-radius:var(--radius);
-           padding:1.3vw 1.8vw;backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);
-           min-width:19vw}
-  .weather .ico{font-size:3.6vw;line-height:1;filter:drop-shadow(0 4px 14px rgba(0,0,0,.4))}
-  .weather .temp{font-size:3.2vw;font-weight:800;line-height:1}
-  .weather .meta{font-size:1.25vw;color:var(--ink-dim);font-weight:600;margin-top:.2vw}
-  .weather .city{font-size:1.25vw;color:var(--ink-faint);font-weight:600}
-
-  /* ---------- Sections ---------- */
-  .main{flex:1;display:flex;flex-direction:column;justify-content:center}
-  .section{margin-top:1.9vw}
-  .apps-section{margin-top:0;text-align:center}
-  .section h2{font-size:1.25vw;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
-              color:var(--ink-faint);margin-bottom:1.6vw;padding-left:.2vw}
-
-  /* ---------- App grid ---------- */
-  .apps{display:flex;gap:2vw;justify-content:center}
-  .tile{position:relative;width:var(--tile);height:calc(var(--tile)*0.72);border-radius:var(--radius);
-        background:var(--glass);border:1px solid var(--stroke);
-        backdrop-filter:blur(20px) saturate(140%);-webkit-backdrop-filter:blur(20px) saturate(140%);
-        display:flex;flex-direction:column;justify-content:space-between;padding:1.3vw 1.4vw;
-        overflow:hidden;cursor:pointer;transition:transform .28s var(--ease),box-shadow .28s var(--ease),border-color .28s var(--ease),background .28s var(--ease)}
-  .tile .glow{position:absolute;inset:0;opacity:.0;transition:opacity .28s var(--ease);
-              background:radial-gradient(120% 120% at 20% 0%,var(--tglow,#7aa2ff44),transparent 60%)}
-  .tile .brand{width:4.4vw;height:4.4vw;border-radius:18px;display:grid;place-items:center;
-               font-size:2.6vw;background:var(--tbg,#ffffff14);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
-  .tile .brand svg{width:60%;height:60%}
-  .tile .label{font-size:2vw;font-weight:700}
-  .tile .sub{font-size:1.25vw;color:var(--ink-dim);font-weight:500;margin-top:.15vw}
-
-  /* ---------- Rails ---------- */
-  .rail{display:flex;gap:1.3vw;overflow:visible}
-  .card{position:relative;width:16.5vw;height:8.4vw;border-radius:20px;overflow:hidden;flex:0 0 auto;
-        border:1px solid var(--stroke);cursor:pointer;
-        transition:transform .28s var(--ease),box-shadow .28s var(--ease),border-color .28s var(--ease)}
-  .card .art{position:absolute;inset:0;background:var(--art,linear-gradient(135deg,#334,#223));}
-  .card .shade{position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.72))}
-  .card .ttl{position:absolute;left:1vw;bottom:.85vw;right:1vw;font-size:1.25vw;font-weight:700;
-             text-shadow:0 2px 10px rgba(0,0,0,.6)}
-  .card .pill{position:absolute;top:.8vw;left:.9vw;font-size:.85vw;font-weight:700;letter-spacing:.08em;
-              text-transform:uppercase;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.18);
-              padding:.3vw .7vw;border-radius:999px;color:#fff;backdrop-filter:blur(6px)}
-
-  /* ---------- Focus state (D-pad) ---------- */
   .focusable{outline:none}
-  .focusable.foc{transform:translateZ(0) scale(1.08);
-                 border-color:var(--stroke-bright);
-                 background:var(--glass-strong);
-                 box-shadow:0 0 0 .22vw var(--focus), 0 2.4vw 5vw rgba(0,0,0,.55), 0 0 6vw var(--tglow,#7aa2ff66)}
-  .tile.foc .glow{opacity:1}
-  .card.foc{box-shadow:0 0 0 .22vw var(--focus),0 2.4vw 5vw rgba(0,0,0,.6)}
+  .dockitem.foc{background:var(--glass-item);transform:translateY(-.25vw);
+                box-shadow:0 0 0 .14vw rgba(255,255,255,.85), 0 1.4vw 3vw rgba(0,0,0,.45)}
+  .dockitem.foc .ic{color:#fff}
+  .dockitem.foc .lbl{color:#fff}
 
-  /* fallback when backdrop-filter is unsupported (older TV browsers) */
+  /* fallback without backdrop-filter (older TV browsers) */
   @supports not ((backdrop-filter:blur(2px)) or (-webkit-backdrop-filter:blur(2px))){
-    .weather,.tile{background:rgba(22,24,34,.82)}
-    .tile.foc{background:rgba(32,35,50,.92)}
+    .dock{background:rgba(14,16,24,.82)}
   }
 
-  .hint{position:fixed;z-index:3;right:var(--safe);bottom:1.4vw;font-size:1vw;color:var(--ink-faint);
-        display:flex;gap:1.4vw;align-items:center}
-  .hint b{color:var(--ink-dim)}
-  .key{display:inline-grid;place-items:center;min-width:1.7vw;height:1.7vw;padding:0 .4vw;border-radius:7px;
-       background:var(--glass);border:1px solid var(--stroke);font-size:.95vw;color:var(--ink-dim);margin-right:.35vw}
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none!important}
+    .photo{transition:none!important}
+  }
 </style>
 </head>
 <body>
   <div class="bg"><div class="photo" id="bgphoto"></div><div class="scrim"></div><div class="grain"></div></div>
 
-  <div class="wrap">
-    <!-- Top bar -->
-    <header class="top">
-      <div class="clock">
-        <div class="time" id="time">--:--</div>
-        <div class="date" id="date">—</div>
-      </div>
-      <div class="weather" id="weather">
-        <div class="ico" id="wIco">◌</div>
-        <div>
-          <div class="temp" id="wTemp">—°</div>
-          <div class="meta" id="wMeta">Loading weather…</div>
-          <div class="city" id="wCity"></div>
-        </div>
-      </div>
-    </header>
-
-    <!-- Apps -->
-    <main class="main">
-      <section class="section apps-section">
-        <h2>Apps</h2>
-        <div class="apps" id="apps" data-row="0"></div>
-      </section>
-    </main>
+  <div class="topright">
+    <div class="time" id="time">--:--</div>
+    <div class="date" id="date">—</div>
+    <div class="wx" id="wx"><span class="ico" id="wIco">◌</span><span id="wText">Loading…</span></div>
   </div>
 
-  <div class="hint">
-    <span><span class="key">↑</span><span class="key">↓</span><span class="key">←</span><span class="key">→</span> <b>Navigate</b></span>
-    <span><span class="key">OK</span> <b>Open</b></span>
+  <div class="dockwrap">
+    <div class="dock" id="dock"></div>
   </div>
 
 <script>
 /* =======================================================================
-   CONFIG  — edit these lists to change what the launcher shows.
+   CONFIG — edit these to change apps, wallpapers and location.
    ======================================================================= */
 const CONFIG = {
-  // Background image behind the UI. "" = none (gradient only), "bg.svg" = the bundled
-  // wallpaper, or any image URL (e.g. a direct link to your own photo).
-  background:"bg.svg",
+  // Wallpapers the dock's "Wallpaper" button cycles through (bundled or any image URL).
+  backgrounds:["bg.svg","bg2.svg"],
 
-  // Weather: set your coordinates. Default = Accra, Ghana.
+  // Weather (Open-Meteo, no key). Default = Accra, Ghana.
   weather:{ lat:5.5600, lon:-0.2050, city:"Accra", unit:"celsius" },
 
-  // App grid. url = where the tile goes when you press OK.
+  // Dock apps, left to right. icon = key in ICONS below (else the first letter is shown).
   apps:[
-    { name:"YouTube",     sub:"Watch",     url:"https://www.youtube.com/tv", glyph:"▶", tint:"#ff4d4d" },
-    { name:"Netflix",     sub:"Streaming", url:"https://www.netflix.com",    glyph:"N", tint:"#e50914" },
-    { name:"Prime Video", sub:"Amazon",    url:"https://www.primevideo.com", glyph:"▷", tint:"#1fb6ff" },
-    { name:"Spotify",     sub:"Music",     url:"https://open.spotify.com",   glyph:"♫", tint:"#1ed760" },
+    { name:"Netflix",     url:"https://www.netflix.com",    icon:"netflix" },
+    { name:"YouTube",     url:"https://www.youtube.com/tv", icon:"youtube" },
+    { name:"Prime Video", url:"https://www.primevideo.com", icon:"prime"   },
+    { name:"Spotify",     url:"https://open.spotify.com",   icon:"spotify" },
   ],
 };
 
+/* ---------- Line icons (monochrome, currentColor) ---------- */
+const ICONS = {
+  netflix:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v18M6 3l12 18M18 3v18"/></svg>',
+  youtube:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="4.5"/><path d="M10.5 9l4.5 3-4.5 3z" fill="currentColor" stroke="none"/></svg>',
+  prime:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M10.5 9.5l4 2.5-4 2.5z" fill="currentColor" stroke="none"/></svg>',
+  spotify:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="18" r="2.4"/><circle cx="17.5" cy="16" r="2.4"/><path d="M9.4 18V7l10.1-2v11"/><path d="M9.4 9.2l10.1-2"/></svg>',
+  apps:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
+  wallpaper:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.5" cy="9.5" r="1.6"/><path d="M4 18l5-5 3.5 3.5L16 13l4 4"/></svg>',
+};
+
 /* =======================================================================
-   Clock
+   Clock (24-hour) + date
    ======================================================================= */
 function tick(){
   const d=new Date();
-  let h=d.getHours(); const m=String(d.getMinutes()).padStart(2,"0");
-  const ampm = h>=12?"PM":"AM"; let hh=h%12; if(hh===0) hh=12;
-  document.getElementById("time").innerHTML = hh+":"+m+'<span class="ampm">'+ampm+'</span>';
-  document.getElementById("date").textContent =
-    d.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"});
+  const hh=String(d.getHours()).padStart(2,"0");
+  const mm=String(d.getMinutes()).padStart(2,"0");
+  document.getElementById("time").textContent=hh+":"+mm;
+  document.getElementById("date").textContent=
+    d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});
 }
-tick(); setInterval(tick,1000*20); // 20s is plenty for minute precision
+tick(); setInterval(tick,15000);
 
 /* =======================================================================
-   Weather (Open-Meteo, no API key)
+   Weather
    ======================================================================= */
-const WMAP = {
-  0:["☀️","Clear"],1:["🌤️","Mainly clear"],2:["⛅","Partly cloudy"],3:["☁️","Overcast"],
+const WMAP={0:["☀️","Clear"],1:["🌤️","Mainly clear"],2:["⛅","Partly cloudy"],3:["☁️","Overcast"],
   45:["🌫️","Fog"],48:["🌫️","Rime fog"],51:["🌦️","Light drizzle"],53:["🌦️","Drizzle"],55:["🌧️","Drizzle"],
   61:["🌦️","Light rain"],63:["🌧️","Rain"],65:["🌧️","Heavy rain"],66:["🌧️","Freezing rain"],67:["🌧️","Freezing rain"],
-  71:["🌨️","Light snow"],73:["🌨️","Snow"],75:["❄️","Heavy snow"],77:["❄️","Snow grains"],
-  80:["🌦️","Showers"],81:["🌧️","Showers"],82:["⛈️","Violent showers"],
-  85:["🌨️","Snow showers"],86:["🌨️","Snow showers"],95:["⛈️","Thunderstorm"],96:["⛈️","Thunderstorm"],99:["⛈️","Thunderstorm"]
-};
+  71:["🌨️","Light snow"],73:["🌨️","Snow"],75:["❄️","Heavy snow"],80:["🌦️","Showers"],81:["🌧️","Showers"],
+  82:["⛈️","Violent showers"],95:["⛈️","Thunderstorm"],96:["⛈️","Thunderstorm"],99:["⛈️","Thunderstorm"]};
 async function loadWeather(){
   const c=CONFIG.weather;
-  document.getElementById("wCity").textContent=c.city;
   try{
     const u=`https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}`+
             `&current=temperature_2m,weather_code&temperature_unit=${c.unit}&timezone=auto`;
-    const r=await fetch(u); const j=await r.json();
+    const j=await (await fetch(u)).json();
     const t=Math.round(j.current.temperature_2m);
     const [ico,txt]=WMAP[j.current.weather_code]||["🌡️","—"];
     document.getElementById("wIco").textContent=ico;
-    document.getElementById("wTemp").textContent=t+"°";
-    document.getElementById("wMeta").textContent=txt;
+    document.getElementById("wText").textContent=t+"°  "+txt+"  ·  "+c.city;
   }catch(e){
     document.getElementById("wIco").textContent="🌡️";
-    document.getElementById("wTemp").textContent="—°";
-    document.getElementById("wMeta").textContent="Weather unavailable";
+    document.getElementById("wText").textContent=c.city;
   }
 }
-loadWeather(); setInterval(loadWeather,1000*60*15);
+loadWeather(); setInterval(loadWeather,900000);
 
 /* =======================================================================
-   Build tiles + rails
+   Background (wallpaper) with persistence + toggle
+   ======================================================================= */
+const BG_KEY="aurora.bg";
+let bgIndex=0;
+try{ const s=localStorage.getItem(BG_KEY); if(s!==null) bgIndex=Math.max(0,Math.min(CONFIG.backgrounds.length-1,parseInt(s,10)||0)); }catch(e){}
+function applyBg(){
+  const url=CONFIG.backgrounds[bgIndex];
+  if(url) document.getElementById("bgphoto").style.backgroundImage='url("'+url+'")';
+}
+function cycleBg(){
+  bgIndex=(bgIndex+1)%CONFIG.backgrounds.length;
+  applyBg();
+  try{ localStorage.setItem(BG_KEY,String(bgIndex)); }catch(e){}
+}
+applyBg();
+
+/* =======================================================================
+   Build the dock
    ======================================================================= */
 function el(tag,cls,html){const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e;}
-
-function buildApps(){
-  const root=document.getElementById("apps");
-  CONFIG.apps.forEach((a,i)=>{
-    const t=el("div","tile focusable");
-    t.style.setProperty("--tglow",a.tint+"66");
-    t.dataset.url=a.url;
-    t.appendChild(el("div","glow"));
-    const brand=el("div","brand",a.glyph);
-    brand.style.setProperty("--tbg",a.tint+"26");
-    brand.style.color=a.tint;
-    const txt=el("div");
-    txt.appendChild(el("div","label",a.name));
-    txt.appendChild(el("div","sub",a.sub));
-    t.appendChild(brand); t.appendChild(txt);
-    root.appendChild(t);
-  });
+function iconMarkup(a){
+  if(a.icon && ICONS[a.icon]) return ICONS[a.icon];
+  return '<span class="letter">'+(a.name?a.name[0].toUpperCase():"?")+'</span>';
 }
-function buildRail(id,cfg){
-  const root=document.getElementById(id);
-  cfg.items.forEach(it=>{
-    const c=el("div","card focusable");
-    c.dataset.url=it.url;
-    const art=el("div","art"); art.style.background=it.art;
-    c.appendChild(art); c.appendChild(el("div","shade"));
-    if(it.pill) c.appendChild(el("div","pill",it.pill));
-    c.appendChild(el("div","ttl",it.title));
-    root.appendChild(c);
-  });
+function addDockItem(opts){
+  const it=el("div","dockitem focusable");
+  it.appendChild(el("div","ic",opts.icon));
+  it.appendChild(el("div","lbl",opts.label));
+  if(opts.action==="open"){ it.dataset.url=opts.url; }
+  it.dataset.action=opts.action;
+  document.getElementById("dock").appendChild(it);
+  return it;
 }
-buildApps();
-
-/* Background image */
-(function(){
-  const p=document.getElementById("bgphoto");
-  if(p && CONFIG.background){ p.style.backgroundImage='url("'+CONFIG.background+'")'; }
-})();
+const dock=document.getElementById("dock");
+CONFIG.apps.forEach(a=>addDockItem({icon:iconMarkup(a),label:a.name,action:"open",url:a.url}));
+dock.appendChild(el("div","sep"));
+addDockItem({icon:ICONS.wallpaper,label:"Wallpaper",action:"wallpaper"});
 
 /* =======================================================================
-   D-pad / remote focus engine
+   D-pad / remote
    ======================================================================= */
-const rows=[...document.querySelectorAll("[data-row]")].map(r=>[...r.querySelectorAll(".focusable")]);
-let rI=0, cI=0;
-
-function clamp(n,min,max){return Math.max(min,Math.min(max,n));}
+const items=[...document.querySelectorAll(".dockitem")];
+let i=0;
 function render(){
-  document.querySelectorAll(".focusable.foc").forEach(e=>e.classList.remove("foc"));
-  const node=rows[rI] && rows[rI][cI];
-  if(!node) return;
-  node.classList.add("foc");
-  node.scrollIntoView({behavior:"smooth",inline:"center",block:"nearest"});
-}
-function move(dr,dc){
-  if(dr!==0){ rI=clamp(rI+dr,0,rows.length-1); cI=clamp(cI,0,rows[rI].length-1); }
-  if(dc!==0){ cI=clamp(cI+dc,0,rows[rI].length-1); }
-  render();
+  document.querySelectorAll(".dockitem.foc").forEach(e=>e.classList.remove("foc"));
+  const n=items[i]; if(!n) return;
+  n.classList.add("foc");
+  n.scrollIntoView({behavior:"smooth",inline:"center",block:"nearest"});
 }
 function activate(){
-  const node=rows[rI] && rows[rI][cI];
-  if(!node) return;
-  const url=node.dataset.url;
-  if(url && url!=="#"){
-    node.animate([{transform:"scale(1.08)"},{transform:"scale(1.0)"},{transform:"scale(1.08)"}],{duration:180});
-    window.location.href=url;
-  }
+  const n=items[i]; if(!n) return;
+  if(n.dataset.action==="wallpaper"){ cycleBg(); return; }
+  const url=n.dataset.url;
+  if(url){ n.animate([{transform:"translateY(-.25vw) scale(1)"},{transform:"translateY(-.25vw) scale(.94)"},{transform:"translateY(-.25vw) scale(1)"}],{duration:160}); window.location.href=url; }
 }
 window.addEventListener("keydown",e=>{
   switch(e.key){
-    case "ArrowUp":    move(-1,0); e.preventDefault(); break;
-    case "ArrowDown":  move( 1,0); e.preventDefault(); break;
-    case "ArrowLeft":  move(0,-1); e.preventDefault(); break;
-    case "ArrowRight": move(0, 1); e.preventDefault(); break;
+    case "ArrowLeft":  i=Math.max(0,i-1); render(); e.preventDefault(); break;
+    case "ArrowRight": i=Math.min(items.length-1,i+1); render(); e.preventDefault(); break;
     case "Enter": case " ": activate(); e.preventDefault(); break;
-    case "Backspace": case "Escape": rI=0;cI=0;render(); e.preventDefault(); break;
+    case "Backspace": case "Escape": i=0; render(); e.preventDefault(); break;
   }
 });
-/* Mouse support for desktop preview */
-document.querySelectorAll(".focusable").forEach((n)=>{
-  n.addEventListener("mouseenter",()=>{
-    rows.forEach((row,ri)=>{const ci=row.indexOf(n);if(ci>-1){rI=ri;cI=ci;render();}});
-  });
-  n.addEventListener("click",activate);
-});
+items.forEach((n,idx)=>{ n.addEventListener("mouseenter",()=>{i=idx;render();}); n.addEventListener("click",activate); });
 render();
 </script>
 </body>
