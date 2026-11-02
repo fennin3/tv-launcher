@@ -42,12 +42,11 @@
       radial-gradient(1200px 800px at 15% -10%, #16213f 0%, transparent 55%),
       radial-gradient(1100px 820px at 100% 0%, #1b2e38 0%, transparent 50%),
       linear-gradient(180deg,var(--bg-1),var(--bg-0) 70%);}
-  .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;will-change:transform}
-  .blob.a{width:46vw;height:46vw;left:-8vw;top:-12vw;background:radial-gradient(circle,#2b4cff55,transparent 60%);animation:drift1 26s var(--ease) infinite alternate}
-  .blob.b{width:40vw;height:40vw;right:-10vw;top:-6vw;background:radial-gradient(circle,#19b89b4d,transparent 60%);animation:drift2 32s var(--ease) infinite alternate}
+  .photo{position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat}
+  .scrim{position:absolute;inset:0;background:
+      linear-gradient(105deg,rgba(4,5,12,.86) 0%,rgba(4,5,12,.46) 38%,rgba(4,5,12,.30) 62%,rgba(4,5,12,.62) 100%),
+      radial-gradient(130% 95% at 50% 125%,rgba(2,3,8,.78),transparent 55%)}
   .grain{position:absolute;inset:0;opacity:.04;background-image:radial-gradient(#fff 0.5px,transparent 0.6px);background-size:3px 3px;mix-blend-mode:overlay}
-  @keyframes drift1{to{transform:translate3d(6vw,4vw,0) scale(1.1)}}
-  @keyframes drift2{to{transform:translate3d(-5vw,6vw,0) scale(1.08)}}
 
   /* ---------- Shell ---------- */
   .wrap{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;
@@ -128,7 +127,7 @@
 </style>
 </head>
 <body>
-  <div class="bg"><div class="blob a"></div><div class="blob b"></div><div class="grain"></div></div>
+  <div class="bg"><div class="photo" id="bgphoto"></div><div class="scrim"></div><div class="grain"></div></div>
 
   <div class="wrap">
     <!-- Top bar -->
@@ -166,6 +165,10 @@
    CONFIG  — edit these lists to change what the launcher shows.
    ======================================================================= */
 const CONFIG = {
+  // Background image behind the UI. "" = none (gradient only), "bg.svg" = the bundled
+  // wallpaper, or any image URL (e.g. a direct link to your own photo).
+  background:"bg.svg",
+
   // Weather: set your coordinates. Default = Accra, Ghana.
   weather:{ lat:5.5600, lon:-0.2050, city:"Accra", unit:"celsius" },
 
@@ -257,6 +260,12 @@ function buildRail(id,cfg){
   });
 }
 buildApps();
+
+/* Background image */
+(function(){
+  const p=document.getElementById("bgphoto");
+  if(p && CONFIG.background){ p.style.backgroundImage='url("'+CONFIG.background+'")'; }
+})();
 
 /* =======================================================================
    D-pad / remote focus engine
