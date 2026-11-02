@@ -21,7 +21,7 @@
     --focus:#ffffff;
     --radius:24px;
     --safe: 2.7vw;           /* overscan-safe gutter */
-    --tile: 15.5vw;          /* app tile size */
+    --tile: 20vw;            /* app tile size */
     --ease:cubic-bezier(.2,.7,.2,1);
   }
 
@@ -71,24 +71,26 @@
   .weather .city{font-size:1.25vw;color:var(--ink-faint);font-weight:600}
 
   /* ---------- Sections ---------- */
+  .main{flex:1;display:flex;flex-direction:column;justify-content:center}
   .section{margin-top:1.9vw}
+  .apps-section{margin-top:0;text-align:center}
   .section h2{font-size:1.25vw;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
-              color:var(--ink-faint);margin-bottom:.75vw;padding-left:.2vw}
+              color:var(--ink-faint);margin-bottom:1.6vw;padding-left:.2vw}
 
   /* ---------- App grid ---------- */
-  .apps{display:flex;gap:1.5vw}
-  .tile{position:relative;width:var(--tile);height:calc(var(--tile)*0.62);border-radius:var(--radius);
+  .apps{display:flex;gap:2vw;justify-content:center}
+  .tile{position:relative;width:var(--tile);height:calc(var(--tile)*0.72);border-radius:var(--radius);
         background:var(--glass);border:1px solid var(--stroke);
         backdrop-filter:blur(20px) saturate(140%);-webkit-backdrop-filter:blur(20px) saturate(140%);
         display:flex;flex-direction:column;justify-content:space-between;padding:1.3vw 1.4vw;
         overflow:hidden;cursor:pointer;transition:transform .28s var(--ease),box-shadow .28s var(--ease),border-color .28s var(--ease),background .28s var(--ease)}
   .tile .glow{position:absolute;inset:0;opacity:.0;transition:opacity .28s var(--ease);
               background:radial-gradient(120% 120% at 20% 0%,var(--tglow,#7aa2ff44),transparent 60%)}
-  .tile .brand{width:3.4vw;height:3.4vw;border-radius:16px;display:grid;place-items:center;
-               font-size:2vw;background:var(--tbg,#ffffff14);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+  .tile .brand{width:4.4vw;height:4.4vw;border-radius:18px;display:grid;place-items:center;
+               font-size:2.6vw;background:var(--tbg,#ffffff14);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
   .tile .brand svg{width:60%;height:60%}
-  .tile .label{font-size:1.5vw;font-weight:700}
-  .tile .sub{font-size:1.05vw;color:var(--ink-dim);font-weight:500;margin-top:.1vw}
+  .tile .label{font-size:2vw;font-weight:700}
+  .tile .sub{font-size:1.25vw;color:var(--ink-dim);font-weight:500;margin-top:.15vw}
 
   /* ---------- Rails ---------- */
   .rail{display:flex;gap:1.3vw;overflow:visible}
@@ -146,21 +148,12 @@
     </header>
 
     <!-- Apps -->
-    <section class="section">
-      <h2>Apps</h2>
-      <div class="apps" id="apps" data-row="0"></div>
-    </section>
-
-    <!-- Rails -->
-    <section class="section">
-      <h2 id="rail1-title">Favorites</h2>
-      <div class="rail" id="rail1" data-row="1"></div>
-    </section>
-
-    <section class="section">
-      <h2 id="rail2-title">Recently used</h2>
-      <div class="rail" id="rail2" data-row="2"></div>
-    </section>
+    <main class="main">
+      <section class="section apps-section">
+        <h2>Apps</h2>
+        <div class="apps" id="apps" data-row="0"></div>
+      </section>
+    </main>
   </div>
 
   <div class="hint">
@@ -178,29 +171,11 @@ const CONFIG = {
 
   // App grid. url = where the tile goes when you press OK.
   apps:[
-    { name:"YouTube",  sub:"TV",       url:"https://www.youtube.com/tv",            glyph:"▶",  tint:"#ff4d4d" },
-    { name:"Netflix",  sub:"Streaming",url:"https://www.netflix.com",               glyph:"N",  tint:"#e50914" },
-    { name:"Prime",    sub:"Video",    url:"https://www.primevideo.com",            glyph:"▷",  tint:"#1fb6ff" },
-    { name:"Jellyfin", sub:"Media",    url:"http://jellyfin.local",                 glyph:"⬡",  tint:"#7b61ff" },
-    { name:"Spotify",  sub:"Music",    url:"https://open.spotify.com",              glyph:"♫",  tint:"#1ed760" },
-    { name:"Browser",  sub:"Web",      url:"https://www.google.com",                glyph:"◎",  tint:"#9aa2ff" },
+    { name:"YouTube",     sub:"Watch",     url:"https://www.youtube.com/tv", glyph:"▶", tint:"#ff4d4d" },
+    { name:"Netflix",     sub:"Streaming", url:"https://www.netflix.com",    glyph:"N", tint:"#e50914" },
+    { name:"Prime Video", sub:"Amazon",    url:"https://www.primevideo.com", glyph:"▷", tint:"#1fb6ff" },
+    { name:"Spotify",     sub:"Music",     url:"https://open.spotify.com",   glyph:"♫", tint:"#1ed760" },
   ],
-
-  rail1:{ title:"Favorites", items:[
-    { title:"YouTube",      url:"https://www.youtube.com/tv",  pill:"App",  art:"linear-gradient(135deg,#ff5f6d,#7a1f2b)" },
-    { title:"Netflix",      url:"https://www.netflix.com",     pill:"App",  art:"linear-gradient(135deg,#b00710,#2a0205)" },
-    { title:"Prime Video",  url:"https://www.primevideo.com",  pill:"App",  art:"linear-gradient(135deg,#1fb6ff,#0a3a63)" },
-    { title:"Spotify",      url:"https://open.spotify.com",    pill:"App",  art:"linear-gradient(135deg,#1ed760,#0b5a2c)" },
-    { title:"News",         url:"https://news.google.com",     pill:"Web",  art:"linear-gradient(135deg,#4b6cff,#17224f)" },
-  ]},
-
-  rail2:{ title:"Recently used", items:[
-    { title:"Google",       url:"https://www.google.com",      pill:"Web",  art:"linear-gradient(135deg,#5b8cff,#1b2a63)" },
-    { title:"Maps",         url:"https://maps.google.com",     pill:"Web",  art:"linear-gradient(135deg,#2ec27a,#0e4a34)" },
-    { title:"Weather",      url:"https://www.google.com/search?q=weather", pill:"Web", art:"linear-gradient(135deg,#59c0ff,#164a6b)" },
-    { title:"Wikipedia",    url:"https://www.wikipedia.org",   pill:"Web",  art:"linear-gradient(135deg,#6b7280,#2a2e38)" },
-    { title:"Settings",     url:"#",                           pill:"System",art:"linear-gradient(135deg,#8a8f9e,#33363f)" },
-  ]},
 };
 
 /* =======================================================================
@@ -282,10 +257,6 @@ function buildRail(id,cfg){
   });
 }
 buildApps();
-document.getElementById("rail1-title").textContent=CONFIG.rail1.title;
-document.getElementById("rail2-title").textContent=CONFIG.rail2.title;
-buildRail("rail1",CONFIG.rail1);
-buildRail("rail2",CONFIG.rail2);
 
 /* =======================================================================
    D-pad / remote focus engine
