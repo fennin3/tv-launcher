@@ -5,84 +5,86 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Aurora — TV Launcher</title>
 <style>
-  /* ---------- Design tokens ---------- */
   :root{
-    --bg-0:#07070b;
-    --ink:#f6f8ff;
-    --ink-dim:#c3c9dc;
-    --ink-faint:#8b92a8;
-    --accent:#8fe6ff;
-    --glass:rgba(18,20,30,0.42);
-    --glass-item:rgba(255,255,255,0.14);
-    --stroke:rgba(255,255,255,0.14);
-    --focus:#ffffff;
-    --safe:3vw;
-    --ease:cubic-bezier(.2,.7,.2,1);
+    --bg-0:#07070b;--ink:#f6f8ff;--ink-dim:#c3c9dc;--ink-faint:#8b92a8;--accent:#8fe6ff;
+    --glass:rgba(18,20,30,0.42);--glass-item:rgba(255,255,255,0.14);
+    --panel:rgba(16,18,28,0.72);--stroke:rgba(255,255,255,0.14);--focus:#ffffff;
+    --safe:3vw;--ease:cubic-bezier(.2,.7,.2,1);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
-  body{
-    background:var(--bg-0);
-    color:var(--ink);
-    font-family:"Inter","SF Pro Display",-apple-system,"Segoe UI",Roboto,system-ui,sans-serif;
-    overflow:hidden;-webkit-font-smoothing:antialiased;letter-spacing:.2px;user-select:none;
-  }
+  body{background:var(--bg-0);color:var(--ink);overflow:hidden;-webkit-font-smoothing:antialiased;letter-spacing:.2px;user-select:none;
+       font-family:"Inter","SF Pro Display",-apple-system,"Segoe UI",Roboto,system-ui,sans-serif}
 
-  /* ---------- Background ---------- */
+  /* Background */
   .bg{position:fixed;inset:0;z-index:0;overflow:hidden;background:var(--bg-0)}
-  .photo{position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat;
-         opacity:0;transition:opacity 1s var(--ease)}
+  .photo{position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat;opacity:0;transition:opacity 1s var(--ease)}
   .photo.show{opacity:1}
   .scrim{position:absolute;inset:0;background:
       radial-gradient(85% 60% at 100% 0%, rgba(2,3,8,.60), transparent 58%),
       linear-gradient(180deg,rgba(2,3,8,.45) 0%,rgba(2,3,8,.18) 20%,rgba(2,3,8,.05) 45%,rgba(2,3,8,.34) 72%,rgba(2,3,8,.80) 100%)}
-  .grain{position:absolute;inset:0;opacity:.035;background-image:radial-gradient(#fff .5px,transparent .6px);
-         background-size:3px 3px;mix-blend-mode:overlay}
+  .grain{position:absolute;inset:0;opacity:.035;background-image:radial-gradient(#fff .5px,transparent .6px);background-size:3px 3px;mix-blend-mode:overlay}
 
-  /* ---------- Top-right clock ---------- */
-  .topright{position:fixed;z-index:2;top:var(--safe);right:var(--safe);text-align:right;
-            text-shadow:0 2px 18px rgba(0,0,0,.5)}
-  .time{font-size:5.6vw;font-weight:300;line-height:.95;letter-spacing:1px;color:#eaf7ff;
-        font-variant-numeric:tabular-nums}
+  /* Clock */
+  .topright{position:fixed;z-index:2;top:var(--safe);right:var(--safe);text-align:right;text-shadow:0 2px 18px rgba(0,0,0,.5)}
+  .time{font-size:5.6vw;font-weight:300;line-height:.95;letter-spacing:1px;color:#eaf7ff;font-variant-numeric:tabular-nums}
+  .time .ampm{font-size:1.8vw;font-weight:600;margin-left:.5vw;color:var(--ink-dim)}
   .date{margin-top:.3vw;font-size:1.7vw;font-weight:600;color:var(--ink)}
-  .wx{margin-top:.5vw;font-size:1.3vw;font-weight:600;color:var(--ink-dim);display:flex;gap:.5vw;
-      justify-content:flex-end;align-items:center}
+  .wx{margin-top:.5vw;font-size:1.3vw;font-weight:600;color:var(--ink-dim);display:flex;gap:.5vw;justify-content:flex-end;align-items:center}
   .wx .ico{font-size:1.5vw;line-height:1}
 
-  /* ---------- Bottom dock ---------- */
-  .dockwrap{position:fixed;z-index:2;left:0;right:0;bottom:calc(var(--safe) * .9);
-            display:flex;justify-content:center;
-            padding-left:max(16px,env(safe-area-inset-left,0px));
-            padding-right:max(16px,env(safe-area-inset-right,0px))}
-  .dock{display:flex;align-items:stretch;gap:.4vw;max-width:100%;
-        background:var(--glass);border:1px solid var(--stroke);border-radius:26px;
-        padding:.7vw 1.1vw;backdrop-filter:blur(26px) saturate(150%);-webkit-backdrop-filter:blur(26px) saturate(150%);
+  /* Dock */
+  .dockwrap{position:fixed;z-index:2;left:0;right:0;bottom:calc(var(--safe)*.9);display:flex;justify-content:center;
+            padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .dock{display:flex;align-items:stretch;gap:.3vw;max-width:100%;background:var(--glass);border:1px solid var(--stroke);
+        border-radius:26px;padding:.7vw 1vw;backdrop-filter:blur(26px) saturate(150%);-webkit-backdrop-filter:blur(26px) saturate(150%);
         box-shadow:0 2vw 5vw rgba(0,0,0,.5)}
-  .dockitem{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.45vw;
-            padding:.85vw 1.35vw;border-radius:18px;cursor:pointer;min-width:6vw;
-            transition:transform .22s var(--ease),background .22s var(--ease),box-shadow .22s var(--ease)}
-  .dockitem .ic{width:2.5vw;height:2.5vw;color:var(--ink);display:grid;place-items:center}
+  .dockitem{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4vw;padding:.8vw 1.1vw;border-radius:18px;
+            cursor:pointer;min-width:5vw;transition:transform .22s var(--ease),background .22s var(--ease),box-shadow .22s var(--ease)}
+  .dockitem .ic{width:2.4vw;height:2.4vw;color:var(--ink);display:grid;place-items:center}
   .dockitem .ic svg{width:100%;height:100%}
-  .dockitem .ic .letter{font-size:2.1vw;font-weight:800;line-height:1}
-  .dockitem .lbl{font-size:1.02vw;font-weight:600;color:var(--ink-dim);white-space:nowrap;
-                 transition:color .22s var(--ease)}
-  .sep{width:1px;align-self:center;height:4.2vw;background:var(--stroke);margin:0 .5vw}
+  .dockitem .ic .letter{font-size:2vw;font-weight:800;line-height:1}
+  .dockitem .lbl{font-size:1vw;font-weight:600;color:var(--ink-dim);white-space:nowrap}
+  .sep{width:1px;align-self:center;height:4vw;background:var(--stroke);margin:0 .5vw}
 
   .focusable{outline:none}
-  .dockitem.foc{background:var(--glass-item);transform:translateY(-.25vw);
-                box-shadow:0 0 0 .14vw rgba(255,255,255,.85), 0 1.4vw 3vw rgba(0,0,0,.45)}
-  .dockitem.foc .ic{color:#fff}
-  .dockitem.foc .lbl{color:#fff}
+  .dockitem.foc{background:var(--glass-item);transform:translateY(-.25vw);box-shadow:0 0 0 .14vw rgba(255,255,255,.85),0 1.4vw 3vw rgba(0,0,0,.45)}
+  .dockitem.foc .ic,.dockitem.foc .lbl{color:#fff}
 
-  /* fallback without backdrop-filter (older TV browsers) */
+  /* Overlays */
+  .overlay{position:fixed;inset:0;z-index:5;display:none;align-items:center;justify-content:center;padding:var(--safe);
+           background:rgba(3,4,10,.62);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+  .overlay.open{display:flex}
+  .panel{width:min(90vw,1500px);max-height:84vh;overflow:auto;background:var(--panel);border:1px solid var(--stroke);
+         border-radius:30px;padding:3vw 3.2vw;box-shadow:0 2vw 6vw rgba(0,0,0,.6)}
+  .panel h2{font-size:2.2vw;font-weight:700;margin-bottom:2vw;letter-spacing:.3px}
+  .panel .hint{margin-top:2vw;font-size:1.1vw;color:var(--ink-faint)}
+  .panel .hint b{color:var(--ink-dim)}
+
+  /* All-apps grid */
+  .appsgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:1.3vw}
+  .app{display:flex;flex-direction:column;align-items:center;gap:.7vw;padding:1.4vw .8vw;border-radius:20px;cursor:pointer;
+       background:rgba(255,255,255,.05);border:1px solid var(--stroke);transition:transform .2s var(--ease),background .2s var(--ease),box-shadow .2s var(--ease)}
+  .app .badge{width:4vw;height:4vw;border-radius:16px;display:grid;place-items:center;background:var(--tbg,#ffffff14);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+  .app .badge svg{width:56%;height:56%}
+  .app .badge .letter{font-size:2vw;font-weight:800}
+  .app .lbl{font-size:1.1vw;font-weight:600;color:var(--ink-dim);text-align:center;white-space:nowrap}
+  .app.foc{background:var(--glass-item);transform:scale(1.07);box-shadow:0 0 0 .16vw var(--focus),0 1.4vw 3vw rgba(0,0,0,.5)}
+  .app.foc .lbl{color:#fff}
+
+  /* Settings rows */
+  .setrows{display:flex;flex-direction:column;gap:1vw}
+  .setrow{display:flex;align-items:center;justify-content:space-between;padding:1.3vw 1.8vw;border-radius:18px;cursor:pointer;
+          background:rgba(255,255,255,.05);border:1px solid var(--stroke)}
+  .setrow .rl{font-size:1.5vw;font-weight:600}
+  .setrow .rv{display:flex;align-items:center;gap:1vw;font-size:1.5vw;font-weight:700;color:var(--accent)}
+  .setrow .rv .chev{color:var(--ink-faint);font-weight:700}
+  .setrow.foc{background:var(--glass-item);box-shadow:0 0 0 .16vw var(--focus)}
+
   @supports not ((backdrop-filter:blur(2px)) or (-webkit-backdrop-filter:blur(2px))){
-    .dock{background:rgba(14,16,24,.82)}
+    .dock{background:rgba(14,16,24,.85)} .overlay{background:rgba(3,4,10,.9)}
   }
-
-  @media (prefers-reduced-motion:reduce){
-    *{transition:none!important}
-    .photo{transition:none!important}
-  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
@@ -94,17 +96,29 @@
     <div class="wx" id="wx"><span class="ico" id="wIco">◌</span><span id="wText">Loading…</span></div>
   </div>
 
-  <div class="dockwrap">
-    <div class="dock" id="dock"></div>
+  <div class="dockwrap"><div class="dock" id="dock"></div></div>
+
+  <div class="overlay" id="appsOverlay">
+    <div class="panel">
+      <h2>All apps</h2>
+      <div class="appsgrid" id="appsGrid"></div>
+      <div class="hint"><b>←↑↓→</b> Navigate &nbsp; <b>OK</b> Open &nbsp; <b>Back</b> Close</div>
+    </div>
+  </div>
+
+  <div class="overlay" id="setOverlay">
+    <div class="panel">
+      <h2>Settings</h2>
+      <div class="setrows" id="setRows"></div>
+      <div class="hint"><b>↑↓</b> Choose &nbsp; <b>←→</b> Change &nbsp; <b>Back</b> Close</div>
+    </div>
   </div>
 
 <script>
 /* =======================================================================
-   CONFIG — edit these to change apps, wallpapers and location.
+   CONFIG
    ======================================================================= */
 const CONFIG = {
-  // Background slideshow: cycles automatically with a crossfade and shuffles each load.
-  // Add/remove any image file or URL. bg.svg / bg2.svg (aurora art) are still in the repo.
   rotateSeconds:45,
   backgrounds:[
     "photo1.jpg","photo2.jpg",
@@ -113,143 +127,239 @@ const CONFIG = {
     "art01.jpg","art02.jpg","art05.jpg","art06.jpg","art10.jpg",
     "sky01.jpg","sky03.jpg","sky05.jpg","sky07.jpg"
   ],
-
-  // Weather (Open-Meteo, no key). Default = Accra, Ghana.
   weather:{ lat:5.5600, lon:-0.2050, city:"Accra", unit:"celsius" },
 
-  // Dock apps, left to right. icon = key in ICONS below (else the first letter is shown).
+  // Dock (main) apps.
   apps:[
     { name:"Netflix",     url:"https://www.netflix.com",    icon:"netflix" },
     { name:"YouTube",     url:"https://www.youtube.com/tv", icon:"youtube" },
     { name:"Prime Video", url:"https://www.primevideo.com", icon:"prime"   },
     { name:"Spotify",     url:"https://open.spotify.com",   icon:"spotify" },
   ],
+
+  // Full app library (All apps overlay).
+  allApps:[
+    { name:"Netflix",     url:"https://www.netflix.com",    icon:"netflix", tint:"#e50914" },
+    { name:"YouTube",     url:"https://www.youtube.com/tv", icon:"youtube", tint:"#ff2d2d" },
+    { name:"Prime Video", url:"https://www.primevideo.com", icon:"prime",   tint:"#1fb6ff" },
+    { name:"Disney+",     url:"https://www.disneyplus.com", letter:"D",     tint:"#2a6ef5" },
+    { name:"Max",         url:"https://play.max.com",       letter:"M",     tint:"#9a6bff" },
+    { name:"Apple TV",    url:"https://tv.apple.com",       icon:"tv",      tint:"#e8e8ef" },
+    { name:"Plex",        url:"https://app.plex.tv",        letter:"P",     tint:"#e5a00d" },
+    { name:"Spotify",     url:"https://open.spotify.com",   icon:"spotify", tint:"#1ed760" },
+    { name:"Apple Music", url:"https://music.apple.com",    icon:"note",    tint:"#fa2d48" },
+    { name:"Showmax",     url:"https://www.showmax.com",    letter:"S",     tint:"#e6005a" },
+    { name:"Twitch",      url:"https://www.twitch.tv",      letter:"T",     tint:"#9146ff" },
+    { name:"Browser",     url:"https://www.google.com",     icon:"globe",   tint:"#9aa2ff" },
+  ],
 };
 
-/* ---------- Line icons (monochrome, currentColor) ---------- */
+/* Icons */
 const ICONS = {
   netflix:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v18M6 3l12 18M18 3v18"/></svg>',
   youtube:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="4.5"/><path d="M10.5 9l4.5 3-4.5 3z" fill="currentColor" stroke="none"/></svg>',
   prime:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M10.5 9.5l4 2.5-4 2.5z" fill="currentColor" stroke="none"/></svg>',
   spotify:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="18" r="2.4"/><circle cx="17.5" cy="16" r="2.4"/><path d="M9.4 18V7l10.1-2v11"/><path d="M9.4 9.2l10.1-2"/></svg>',
+  note:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="18" r="2.4"/><circle cx="18" cy="16" r="2.4"/><path d="M9.4 18V6l10.6-2v12"/></svg>',
+  tv:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="13" rx="2"/><path d="M8 3l4 4 4-4"/></svg>',
+  globe:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>',
   apps:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
   wallpaper:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.5" cy="9.5" r="1.6"/><path d="M4 18l5-5 3.5 3.5L16 13l4 4"/></svg>',
+  settings:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
 };
 
 /* =======================================================================
-   Clock (24-hour) + date
+   Settings (persisted)
+   ======================================================================= */
+const SET_KEY="aurora.settings";
+const S = Object.assign(
+  { clock24:true, weather:true, unit:CONFIG.weather.unit, rotate:CONFIG.rotateSeconds, category:"all" },
+  loadSettings()
+);
+function loadSettings(){ try{ return JSON.parse(localStorage.getItem(SET_KEY)||"{}"); }catch(e){ return {}; } }
+function saveSettings(){ try{ localStorage.setItem(SET_KEY,JSON.stringify(S)); }catch(e){} }
+
+/* =======================================================================
+   Clock
    ======================================================================= */
 function tick(){
-  const d=new Date();
-  const hh=String(d.getHours()).padStart(2,"0");
+  const d=new Date(); let hh, ampm="";
+  if(S.clock24){ hh=String(d.getHours()).padStart(2,"0"); }
+  else { let h=d.getHours()%12; if(h===0)h=12; hh=String(h); ampm=d.getHours()>=12?"PM":"AM"; }
   const mm=String(d.getMinutes()).padStart(2,"0");
-  document.getElementById("time").textContent=hh+":"+mm;
-  document.getElementById("date").textContent=
-    d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});
+  document.getElementById("time").innerHTML = hh+":"+mm + (ampm?'<span class="ampm">'+ampm+'</span>':'');
+  document.getElementById("date").textContent = d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});
 }
 tick(); setInterval(tick,15000);
 
 /* =======================================================================
    Weather
    ======================================================================= */
-const WMAP={0:["☀️","Clear"],1:["🌤️","Mainly clear"],2:["⛅","Partly cloudy"],3:["☁️","Overcast"],
-  45:["🌫️","Fog"],48:["🌫️","Rime fog"],51:["🌦️","Light drizzle"],53:["🌦️","Drizzle"],55:["🌧️","Drizzle"],
-  61:["🌦️","Light rain"],63:["🌧️","Rain"],65:["🌧️","Heavy rain"],66:["🌧️","Freezing rain"],67:["🌧️","Freezing rain"],
-  71:["🌨️","Light snow"],73:["🌨️","Snow"],75:["❄️","Heavy snow"],80:["🌦️","Showers"],81:["🌧️","Showers"],
-  82:["⛈️","Violent showers"],95:["⛈️","Thunderstorm"],96:["⛈️","Thunderstorm"],99:["⛈️","Thunderstorm"]};
+const WMAP={0:["☀️","Clear"],1:["🌤️","Mainly clear"],2:["⛅","Partly cloudy"],3:["☁️","Overcast"],45:["🌫️","Fog"],48:["🌫️","Rime fog"],
+  51:["🌦️","Light drizzle"],53:["🌦️","Drizzle"],55:["🌧️","Drizzle"],61:["🌦️","Light rain"],63:["🌧️","Rain"],65:["🌧️","Heavy rain"],
+  71:["🌨️","Light snow"],73:["🌨️","Snow"],75:["❄️","Heavy snow"],80:["🌦️","Showers"],81:["🌧️","Showers"],82:["⛈️","Violent showers"],
+  95:["⛈️","Thunderstorm"],96:["⛈️","Thunderstorm"],99:["⛈️","Thunderstorm"]};
+function applyWeatherVisibility(){ document.getElementById("wx").style.display = S.weather ? "" : "none"; }
 async function loadWeather(){
+  applyWeatherVisibility();
+  if(!S.weather) return;
   const c=CONFIG.weather;
   try{
-    const u=`https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}`+
-            `&current=temperature_2m,weather_code&temperature_unit=${c.unit}&timezone=auto`;
+    const u=`https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}&current=temperature_2m,weather_code&temperature_unit=${S.unit}&timezone=auto`;
     const j=await (await fetch(u)).json();
     const t=Math.round(j.current.temperature_2m);
     const [ico,txt]=WMAP[j.current.weather_code]||["🌡️","—"];
     document.getElementById("wIco").textContent=ico;
     document.getElementById("wText").textContent=t+"°  "+txt+"  ·  "+c.city;
-  }catch(e){
-    document.getElementById("wIco").textContent="🌡️";
-    document.getElementById("wText").textContent=c.city;
-  }
+  }catch(e){ document.getElementById("wIco").textContent="🌡️"; document.getElementById("wText").textContent=c.city; }
 }
 loadWeather(); setInterval(loadWeather,900000);
 
 /* =======================================================================
-   Background (wallpaper) with persistence + toggle
+   Background slideshow
    ======================================================================= */
-const ROTATE_MS=(CONFIG.rotateSeconds||45)*1000;
-const bgList=CONFIG.backgrounds.slice();
-for(let k=bgList.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[bgList[k],bgList[j]]=[bgList[j],bgList[k]];}
+const CAT_PREFIX={all:null,interiors:["photo"],landscapes:["land"],city:["city"],art:["art"],aurora:["sky"]};
+function shuffle(a){ a=a.slice(); for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]];} return a; }
+function filtered(){
+  const pref=CAT_PREFIX[S.category];
+  let list=pref ? CONFIG.backgrounds.filter(f=>pref.some(p=>f.startsWith(p))) : CONFIG.backgrounds.slice();
+  if(!list.length) list=CONFIG.backgrounds.slice();
+  return shuffle(list);
+}
+let bgList=filtered();
 const layers=[document.getElementById("bgA"),document.getElementById("bgB")];
 let bgIdx=0, active=0, bgTimer=null;
 function setLayer(el,url){el.style.backgroundImage='url("'+url+'")';}
 function preload(url){const im=new Image();im.src=url;}
 function showBg(idx){
-  idx=((idx%bgList.length)+bgList.length)%bgList.length;
-  bgIdx=idx;
-  const next=1-active;
-  setLayer(layers[next],bgList[idx]);
-  void layers[next].offsetWidth;            // reflow so the fade runs
-  layers[next].classList.add("show");
-  layers[active].classList.remove("show");
-  active=next;
+  idx=((idx%bgList.length)+bgList.length)%bgList.length; bgIdx=idx;
+  const next=1-active; setLayer(layers[next],bgList[idx]);
+  void layers[next].offsetWidth;
+  layers[next].classList.add("show"); layers[active].classList.remove("show"); active=next;
   preload(bgList[(idx+1)%bgList.length]);
 }
 function nextBg(){ showBg(bgIdx+1); resetBgTimer(); }
-function resetBgTimer(){ if(bgTimer) clearInterval(bgTimer); bgTimer=setInterval(()=>showBg(bgIdx+1),ROTATE_MS); }
-/* show the first image, then rotate */
-setLayer(layers[0],bgList[0]); layers[0].classList.add("show"); preload(bgList[1%bgList.length]);
-resetBgTimer();
+function resetBgTimer(){ if(bgTimer){clearInterval(bgTimer);bgTimer=null;} if(S.rotate>0) bgTimer=setInterval(()=>showBg(bgIdx+1),S.rotate*1000); }
+function rebuildBg(){ bgList=filtered(); bgIdx=0; showBg(0); resetBgTimer(); }
+setLayer(layers[0],bgList[0]); layers[0].classList.add("show"); preload(bgList[1%bgList.length]); resetBgTimer();
 
 /* =======================================================================
-   Build the dock
+   Build UI
    ======================================================================= */
 function el(tag,cls,html){const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e;}
-function iconMarkup(a){
-  if(a.icon && ICONS[a.icon]) return ICONS[a.icon];
-  return '<span class="letter">'+(a.name?a.name[0].toUpperCase():"?")+'</span>';
-}
-function addDockItem(opts){
+function glyph(a){ if(a.icon&&ICONS[a.icon]) return ICONS[a.icon]; return '<span class="letter">'+(a.name?a.name[0].toUpperCase():"?")+'</span>'; }
+
+/* Dock */
+const dock=document.getElementById("dock");
+function addDock(opts){
   const it=el("div","dockitem focusable");
   it.appendChild(el("div","ic",opts.icon));
   it.appendChild(el("div","lbl",opts.label));
-  if(opts.action==="open"){ it.dataset.url=opts.url; }
-  it.dataset.action=opts.action;
-  document.getElementById("dock").appendChild(it);
-  return it;
+  it.dataset.action=opts.action; if(opts.url) it.dataset.url=opts.url;
+  dock.appendChild(it); return it;
 }
-const dock=document.getElementById("dock");
-CONFIG.apps.forEach(a=>addDockItem({icon:iconMarkup(a),label:a.name,action:"open",url:a.url}));
+CONFIG.apps.forEach(a=>addDock({icon:glyph(a),label:a.name,action:"open",url:a.url}));
 dock.appendChild(el("div","sep"));
-addDockItem({icon:ICONS.wallpaper,label:"Wallpaper",action:"wallpaper"});
+addDock({icon:ICONS.wallpaper,label:"Wallpaper",action:"wallpaper"});
+addDock({icon:ICONS.apps,label:"All apps",action:"apps"});
+addDock({icon:ICONS.settings,label:"Settings",action:"settings"});
+const dockItems=[...dock.querySelectorAll(".dockitem")];
+
+/* All-apps grid */
+const APP_COLS=6;
+const appsGrid=document.getElementById("appsGrid");
+CONFIG.allApps.forEach(a=>{
+  const t=el("div","app focusable"); t.dataset.url=a.url;
+  const badge=el("div","badge",glyph(a));
+  if(a.tint){ badge.style.setProperty("--tbg",a.tint+"26"); badge.style.color=a.tint; }
+  t.appendChild(badge); t.appendChild(el("div","lbl",a.name));
+  appsGrid.appendChild(t);
+});
+const appItems=[...appsGrid.querySelectorAll(".app")];
+
+/* Settings rows */
+const setDefs=[
+  {key:"clock24", label:"Clock",       opts:[{l:"24-hour",v:true},{l:"12-hour",v:false}], apply:tick},
+  {key:"weather", label:"Weather",     opts:[{l:"On",v:true},{l:"Off",v:false}],           apply:loadWeather},
+  {key:"unit",    label:"Temperature", opts:[{l:"°C",v:"celsius"},{l:"°F",v:"fahrenheit"}], apply:loadWeather},
+  {key:"rotate",  label:"Change wallpaper every", opts:[{l:"15s",v:15},{l:"30s",v:30},{l:"45s",v:45},{l:"60s",v:60},{l:"Off",v:0}], apply:resetBgTimer},
+  {key:"category",label:"Wallpapers",  opts:[{l:"All",v:"all"},{l:"Interiors",v:"interiors"},{l:"Landscapes",v:"landscapes"},{l:"City",v:"city"},{l:"Art",v:"art"},{l:"Aurora",v:"aurora"}], apply:rebuildBg},
+];
+const setRows=document.getElementById("setRows");
+setDefs.forEach(def=>{
+  const row=el("div","setrow focusable");
+  row.appendChild(el("div","rl",def.label));
+  const rv=el("div","rv"); rv.innerHTML='<span class="chev">‹</span><span class="val"></span><span class="chev">›</span>';
+  row.appendChild(rv); setRows.appendChild(row);
+  def.row=row; def.valEl=rv.querySelector(".val");
+  def.idx=Math.max(0,def.opts.findIndex(o=>o.v===S[def.key]));
+  def.valEl.textContent=def.opts[def.idx].l;
+});
+const setItems=[...setRows.querySelectorAll(".setrow")];
 
 /* =======================================================================
-   D-pad / remote
+   Focus engine (modes: dock, apps, settings)
    ======================================================================= */
-const items=[...document.querySelectorAll(".dockitem")];
-let i=0;
-function render(){
-  document.querySelectorAll(".dockitem.foc").forEach(e=>e.classList.remove("foc"));
-  const n=items[i]; if(!n) return;
-  n.classList.add("foc");
-  n.scrollIntoView({behavior:"smooth",inline:"center",block:"nearest"});
+let mode="dock", di=0, ai=0, sidx=0, dockReturn=0;
+function clearFoc(){ document.querySelectorAll(".foc").forEach(e=>e.classList.remove("foc")); }
+function focusDock(){ clearFoc(); const n=dockItems[di]; if(n){n.classList.add("foc");n.scrollIntoView({inline:"center",block:"nearest"});} }
+function focusApps(){ clearFoc(); const n=appItems[ai]; if(n){n.classList.add("foc");n.scrollIntoView({block:"nearest"});} }
+function focusSet(){ clearFoc(); const n=setItems[sidx]; if(n){n.classList.add("foc");n.scrollIntoView({block:"nearest"});} }
+
+function openOverlay(which){
+  dockReturn=di;
+  if(which==="apps"){ document.getElementById("appsOverlay").classList.add("open"); mode="apps"; ai=0; focusApps(); }
+  else { document.getElementById("setOverlay").classList.add("open"); mode="settings"; sidx=0; focusSet(); }
 }
-function activate(){
-  const n=items[i]; if(!n) return;
-  if(n.dataset.action==="wallpaper"){ nextBg(); return; }
-  const url=n.dataset.url;
-  if(url){ n.animate([{transform:"translateY(-.25vw) scale(1)"},{transform:"translateY(-.25vw) scale(.94)"},{transform:"translateY(-.25vw) scale(1)"}],{duration:160}); window.location.href=url; }
+function closeOverlay(){
+  document.getElementById("appsOverlay").classList.remove("open");
+  document.getElementById("setOverlay").classList.remove("open");
+  mode="dock"; di=dockReturn; focusDock();
 }
+function activateDock(){
+  const n=dockItems[di]; const a=n.dataset.action;
+  if(a==="open"){ if(n.dataset.url) window.location.href=n.dataset.url; }
+  else if(a==="wallpaper"){ nextBg(); }
+  else if(a==="apps"){ openOverlay("apps"); }
+  else if(a==="settings"){ openOverlay("settings"); }
+}
+function changeSetting(i,dir){
+  const def=setDefs[i]; def.idx=(def.idx+dir+def.opts.length)%def.opts.length;
+  S[def.key]=def.opts[def.idx].v; def.valEl.textContent=def.opts[def.idx].l;
+  saveSettings(); if(def.apply) def.apply();
+}
+
 window.addEventListener("keydown",e=>{
-  switch(e.key){
-    case "ArrowLeft":  i=Math.max(0,i-1); render(); e.preventDefault(); break;
-    case "ArrowRight": i=Math.min(items.length-1,i+1); render(); e.preventDefault(); break;
-    case "Enter": case " ": activate(); e.preventDefault(); break;
-    case "Backspace": case "Escape": i=0; render(); e.preventDefault(); break;
+  const k=e.key;
+  if(mode==="dock"){
+    if(k==="ArrowLeft"){di=Math.max(0,di-1);focusDock();}
+    else if(k==="ArrowRight"){di=Math.min(dockItems.length-1,di+1);focusDock();}
+    else if(k==="Enter"||k===" "){activateDock();}
+    else return; e.preventDefault();
+  } else if(mode==="apps"){
+    if(k==="ArrowLeft"){ai=Math.max(0,ai-1);focusApps();}
+    else if(k==="ArrowRight"){ai=Math.min(appItems.length-1,ai+1);focusApps();}
+    else if(k==="ArrowUp"){ai=Math.max(0,ai-APP_COLS);focusApps();}
+    else if(k==="ArrowDown"){ai=Math.min(appItems.length-1,ai+APP_COLS);focusApps();}
+    else if(k==="Enter"||k===" "){const u=appItems[ai].dataset.url; if(u) window.location.href=u;}
+    else if(k==="Escape"||k==="Backspace"){closeOverlay();}
+    else return; e.preventDefault();
+  } else if(mode==="settings"){
+    if(k==="ArrowUp"){sidx=Math.max(0,sidx-1);focusSet();}
+    else if(k==="ArrowDown"){sidx=Math.min(setItems.length-1,sidx+1);focusSet();}
+    else if(k==="ArrowLeft"){changeSetting(sidx,-1);}
+    else if(k==="ArrowRight"||k==="Enter"||k===" "){changeSetting(sidx,1);}
+    else if(k==="Escape"||k==="Backspace"){closeOverlay();}
+    else return; e.preventDefault();
   }
 });
-items.forEach((n,idx)=>{ n.addEventListener("mouseenter",()=>{i=idx;render();}); n.addEventListener("click",activate); });
-render();
+
+/* Mouse support (desktop preview) */
+dockItems.forEach((n,idx)=>{ n.addEventListener("mouseenter",()=>{if(mode==="dock"){di=idx;focusDock();}}); n.addEventListener("click",()=>{di=idx;focusDock();activateDock();}); });
+appItems.forEach((n,idx)=>{ n.addEventListener("mouseenter",()=>{if(mode==="apps"){ai=idx;focusApps();}}); n.addEventListener("click",()=>{const u=n.dataset.url;if(u)window.location.href=u;}); });
+setItems.forEach((n,idx)=>{ n.addEventListener("mouseenter",()=>{if(mode==="settings"){sidx=idx;focusSet();}}); n.addEventListener("click",()=>{sidx=idx;focusSet();changeSetting(idx,1);}); });
+
+focusDock();
 </script>
 </body>
 </html>
